@@ -10,8 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>
-    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConexion"),
-    b => b.MigrationsAssembly("Movie.Infrastructure")));
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("GetConnection"),
+    b => b.MigrationsAssembly("App.Infrastructure")));
 
 var app = builder.Build();
 
