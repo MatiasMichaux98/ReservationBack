@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Domain.Entitie
 {
@@ -11,6 +8,15 @@ namespace App.Domain.Entitie
     {
         [Key]
         public int ID { get; set; }
-        public string Nombre { get; set; }
+        public required string Nombre { get; set; }
+        public string Descripcion { get; set; }
+        public string Imagen { get; set; }
+        public int DuracionMinutos { get; set; }
+        public int AñoLanzamiento { get; set; }
+        public int GeneroID { get; set; }
+        public Genero genero { get; set; } = null!;
+        public ICollection<Horario> horarios { get; set; } = new List<Horario>();
+
+
     }
 }
