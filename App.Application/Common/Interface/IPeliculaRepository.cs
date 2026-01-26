@@ -1,16 +1,15 @@
 ﻿using App.Domain.Entitie;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Application.Common.Interface
 {
     public interface IPeliculaRepository
     {
-
-        Task<Pelicula> GetPelicula();
+        public Task<List<Pelicula>> GetPeliculas();
+        public Task<Pelicula> GetPelicula(int id);
+        public Task<Pelicula> CreatePelicula(Pelicula pelicula);
+        public Task<Pelicula> UpdatePelicula(Pelicula pelicula);
+        public Task<bool> DeletePelicula(int id);
 
     }
 }

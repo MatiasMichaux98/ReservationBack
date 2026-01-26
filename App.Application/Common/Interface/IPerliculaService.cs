@@ -1,4 +1,4 @@
-﻿using App.Application.Common.ModelsDtos;
+﻿using App.Application.Common.ModelsDtos.DtoPelicula;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +7,13 @@ using System.Threading.Tasks;
 
 namespace App.Application.Common.Interface
 {
-    internal interface IPerliculaService
+    public interface IPerliculaService
     {
-        public Task<List<PeliculaDto>> GetPeliculas();
+        public Task<List<ResponseDto>> GetPeliculas();
+        public Task<ResponseDto> GetPelicula(int id);
+        public Task<ResponseDto> CreatePelicula(CreateMovieDto model);
+        public Task<ResponseDto> UpdatePelicula(UpdateMovieDto model ,int id);
+        public Task<bool> DeletePelicula(int id);
 
     }
 }
