@@ -4,6 +4,8 @@ using App.Infrastructure.Data;
 using App.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using App.Infrastructure.Middleware;
+using App.Application.Common.Interface.HorarioInterface;
+using App.Application.Common.Interface.SalaInterface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,6 +22,10 @@ builder.Services.AddDbContext<ApplicationDbContext>
 builder.Services.AddScoped<IPeliculaRepository, PeliculaRepository>();
 builder.Services.AddScoped<IPerliculaService, PeliculaService>();
 builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
+builder.Services.AddScoped<IHorarioRepository, HorarioRepository>();
+builder.Services.AddScoped<IHorarioService, HorarioService>();
+builder.Services.AddScoped<ISalaRepository, SalaRepository>();
+
 
 var app = builder.Build();
 
