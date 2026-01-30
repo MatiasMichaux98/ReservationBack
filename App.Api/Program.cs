@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using App.Infrastructure.Middleware;
 using App.Application.Common.Interface.HorarioInterface;
 using App.Application.Common.Interface.SalaInterface;
+using App.Application.Common.Interface.AsientoInterface;
+using App.Application.Common.Interface.ReservacionInterface;
+using App.Application.Common.Interface.HorarioAsientoInterface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,7 +28,10 @@ builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
 builder.Services.AddScoped<IHorarioRepository, HorarioRepository>();
 builder.Services.AddScoped<IHorarioService, HorarioService>();
 builder.Services.AddScoped<ISalaRepository, SalaRepository>();
-
+builder.Services.AddScoped<IAsientoRepository, AsientoRepository>();
+builder.Services.AddScoped<IHorarioAsientoRepository, HorarioAsientoRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservacionRepository>();
+builder.Services.AddScoped<IReservacionService, ReservacionService>();
 
 var app = builder.Build();
 

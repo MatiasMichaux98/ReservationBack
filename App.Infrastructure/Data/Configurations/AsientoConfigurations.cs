@@ -1,11 +1,7 @@
 ﻿using App.Domain.Entitie;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Infrastructure.Data.Configurations
 {
@@ -20,11 +16,6 @@ namespace App.Infrastructure.Data.Configurations
                 .WithOne(ha => ha.asiento)
                 .HasForeignKey(ha => ha.IdAsiento)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasMany(a => a.reservaciones)
-               .WithOne(ha => ha.asiento)
-               .HasForeignKey(ha => ha.IdAsiento)
-               .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(h => h.sala)
               .WithMany(h => h.asientos)

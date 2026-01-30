@@ -18,16 +18,19 @@ using App.Infrastructure.Exceptions;
         public HorarioService(IHorarioRepository horarioRepository,
                              IPeliculaRepository peliculaRepository,
                              ISalaRepository salaRepository,
-                             IAsientoRepository _asientoRepository,
+                             IAsientoRepository asientoRepository,
                              IHorarioAsientoRepository horarioAsientoRepository)
         {
             _horarioRepository = horarioRepository;
             _peliculaRepository = peliculaRepository;
             _salaRepository = salaRepository;
             _horarioAsientoRepository = horarioAsientoRepository;
+            _asientoRepository = asientoRepository;
         }
         public async Task<ResponseHorarioDto> CreateHorario(CreateHorarioDto model)
         {
+            Console.WriteLine("🔥 CREATE HORARIO LLAMADO");
+
             var pelicula = await _peliculaRepository.GetPelicula(model.IdPelicula);
             if(pelicula == null) throw new BussinessExceptions("No existe la pelicula");
 
@@ -61,6 +64,7 @@ using App.Infrastructure.Exceptions;
                     IsReserved = false
                 });
             }
+          
             return new ResponseHorarioDto
             {
                 id = newhorario.ID,

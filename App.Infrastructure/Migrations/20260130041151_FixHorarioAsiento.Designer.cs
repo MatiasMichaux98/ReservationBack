@@ -4,6 +4,7 @@ using App.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260130041151_FixHorarioAsiento")]
+    partial class FixHorarioAsiento
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,8 +297,6 @@ namespace App.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("IdAsiento");
 
                     b.HasIndex("IdHorario");
 
@@ -593,7 +594,7 @@ namespace App.Infrastructure.Migrations
                 {
                     b.HasOne("App.Domain.Entitie.Asiento", "asiento")
                         .WithMany("reservaciones")
-                        .HasForeignKey("IdAsiento")
+                        .HasForeignKey("IdHorario")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
