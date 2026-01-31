@@ -5,11 +5,11 @@ namespace App.Application.Common.Interface.ReservacionInterface
 {
     public interface IReservacionService
     {
-        Task<List<ResponseRDto>> GetReservacion();
+        Task<List<ResponseRDto>> GetReservaciones();
         Task<ResponseRDto> GetReservacionID(int id);
         Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto);
         Task<ResponseRDto> UpdateReservacion(UpdateReservacionDto dto, int id);
-        Task<ResponseRDto> DeleteReservacion(int id);
+        Task<bool> DeleteReservacion(int id);
         Task<List<ResponseRDto>> GetReservacionByHorario(int IdHorario);
 
     }

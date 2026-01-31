@@ -2,11 +2,7 @@
 using App.Domain.Entitie;
 using App.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Infrastructure.Repositories
 {
@@ -24,19 +20,34 @@ namespace App.Infrastructure.Repositories
             return reservacion;
         }
 
-        public Task DeleteReservacion(Reservacion reservacion)
+        public async Task<bool> DeleteReservacion(Reservacion reservacion)
         {
-            throw new NotImplementedException();
+            _context.Reservaciones.Remove(reservacion);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<List<Reservacion>> GetReservacion()
+        public async Task<List<Reservacion>> GetReservaciones()
         {
-            throw new NotImplementedException();
+            var reservacion = await _context.Reservaciones
+                .Include(h => h.horario)
+                .ThenInclude(p => p.pelicula)
+                .Include(h => h.horario)
+                .ThenInclude(a => a.sala)
+                .ToListAsync();
+            return reservacion;
         }
 
-        public Task<List<Reservacion>> GetReservacionByHorario(int IdHorario)
+        public async Task<List<Reservacion>> GetReservacionByHorario(int IdHorario)
         {
-            throw new NotImplementedException();
+            var reservacion = await _context.Reservaciones
+                .Include(h => h.horario)
+                .ThenInclude(p => p.pelicula)
+                .Include(h => h.horario)
+                .ThenInclude(a => a.sala)
+                .Where(p => p.IdHorario == IdHorario)
+                .ToListAsync();
+            return reservacion;
         }
 
         public async Task<Reservacion> GetReservacionID(int idreservacion)

@@ -20,5 +20,29 @@ namespace App.Api.Controllers
             var reservacion = await _reservacionService.CreateReservacion(dto);
             return Ok(reservacion);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetReservaciones()
+        {
+            var reservaciones = await _reservacionService.GetReservaciones();
+            return Ok(reservaciones);
+        }
+        [HttpGet("/ByHorario/{id}")]
+        public async Task<IActionResult> GetReservacionesByHorario(int id)
+        {
+            var reservaciones = await _reservacionService.GetReservacionByHorario(id);
+            return Ok(reservaciones);
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetReservacionID(int id)
+        {
+            var reservacion = await _reservacionService.GetReservacionID(id);
+            return Ok(reservacion);
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReservacion(int id)
+        {
+            var reservacion = await _reservacionService.DeleteReservacion(id);
+            return Ok(reservacion);
+        }
     }
 }
