@@ -1,5 +1,4 @@
-﻿using App.Application.Common.Interface.AsientoInterface;
-using App.Application.Common.Interface.HorarioAsientoInterface;
+﻿using App.Application.Common.Interface.HorarioAsientoInterface;
 using App.Application.Common.Interface.HorarioInterface;
 using App.Application.Common.Interface.ReservacionInterface;
 using App.Application.Common.ModelsDtos.DtoReservacion;
@@ -34,6 +33,10 @@ namespace App.Application.Service
                                     .GetValidacion(dto.IdHorario, dto.IdAsiento);
             if (horarioAsiento == null) throw new BussinessExceptions($"No se puede reservar el asiento con ID:{dto.IdAsiento}");
             
+            if (DateTime.Now >= horario.Fecha.ToDateTime(horario.HoraInicio)) 
+                throw new BussinessExceptions("No se puede reservar la funcion ya comenzo");
+            
+
             horarioAsiento.IsReserved = true;
 
             var newReseracion = new Reservacion
@@ -70,9 +73,7 @@ namespace App.Application.Service
 
             await _reservationRepository.DeleteReservacion(reservacion);
             return true;
-
         }
-
         public async Task<List<ResponseRDto>> GetReservaciones()
         {
             var reservaciones = await _reservationRepository.GetReservaciones();

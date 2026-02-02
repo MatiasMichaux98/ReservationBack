@@ -29,8 +29,6 @@ using App.Infrastructure.Exceptions;
         }
         public async Task<ResponseHorarioDto> CreateHorario(CreateHorarioDto model)
         {
-            Console.WriteLine("🔥 CREATE HORARIO LLAMADO");
-
             var pelicula = await _peliculaRepository.GetPelicula(model.IdPelicula);
             if(pelicula == null) throw new BussinessExceptions("No existe la pelicula");
 
@@ -40,8 +38,12 @@ using App.Infrastructure.Exceptions;
             var horaFinal = model.HoraInicio.AddMinutes(pelicula.DuracionMinutos);
 
             if (model.Fecha < DateOnly.FromDateTime(DateTime.Today))
-                throw new BussinessExceptions("La fecha es invalida"); 
+                throw new BussinessExceptions("La fecha es invalida");
 
+            var horarioRepetido = await _horarioRepository
+                .HorarioExiste(model.IdSala, model.Fecha, model.HoraInicio);
+            if (horarioRepetido) throw new BussinessExceptions("No se puede crear dos horarios iguales");
+            
             var newhorario = new Horario
             {
                 IdPelicula = model.IdPelicula,
@@ -64,7 +66,6 @@ using App.Infrastructure.Exceptions;
                     IsReserved = false
                 });
             }
-          
             return new ResponseHorarioDto
             {
                 id = newhorario.ID,

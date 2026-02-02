@@ -39,6 +39,14 @@ namespace App.Infrastructure.Repositories
             return horarios;
         }
 
+        public async Task<bool> HorarioExiste(int IdSala, DateOnly fecha, TimeOnly hora)
+        {
+            return await _context.Horarios.AnyAsync(r =>
+                           r.IdSala == IdSala &&
+                           r.Fecha == fecha &&
+                           r.HoraInicio == hora);
+        }
+
         public async Task<Horario> UpdateHorario(Horario horario)
         {
              _context.Horarios.Update(horario);
