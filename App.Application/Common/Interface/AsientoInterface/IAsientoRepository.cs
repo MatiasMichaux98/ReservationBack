@@ -10,6 +10,8 @@ namespace App.Application.Common.Interface.AsientoInterface
     public interface IAsientoRepository
     {
         public Task<List<Asiento>> GetAsientosBySala(int IdSala);
-        
+        public Task<Asiento> GetAsiento(int idasiento);
+
+
     }
 }

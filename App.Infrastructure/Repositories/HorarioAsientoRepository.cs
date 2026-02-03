@@ -13,6 +13,16 @@ namespace App.Infrastructure.Repositories
         {
             _context = context;
         }
+        public async Task<HorarioAsiento> GetAsiento(int idasiento, int idHorario)
+        {
+            var asiento = await _context.HorarioAsientos
+                .Include(a => a.asiento)
+                .Where(a => a.IdAsiento == idasiento && a.IdHorario == idHorario)
+                .FirstOrDefaultAsync();
+            return asiento;
+
+        }
+
         public async Task<HorarioAsiento> CreateAsync(HorarioAsiento horarioAsiento)
         {
             _context.HorarioAsientos.Add(horarioAsiento);

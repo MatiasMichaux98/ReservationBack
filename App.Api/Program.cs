@@ -9,6 +9,7 @@ using App.Application.Common.Interface.SalaInterface;
 using App.Application.Common.Interface.AsientoInterface;
 using App.Application.Common.Interface.ReservacionInterface;
 using App.Application.Common.Interface.HorarioAsientoInterface;
+using App.Application.Common.Interface.GeneroInterface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -32,6 +33,14 @@ builder.Services.AddScoped<IAsientoRepository, AsientoRepository>();
 builder.Services.AddScoped<IHorarioAsientoRepository, HorarioAsientoRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservacionRepository>();
 builder.Services.AddScoped<IReservacionService, ReservacionService>();
+builder.Services.AddScoped<IGeneroRepository, GeneroRepository>();
+builder.Services.AddScoped<IGeneroService, GeneroService>();
+builder.Services.AddScoped<IAsientoService, AsientoService>();
+builder.Services.AddScoped<IAsientoRepository, AsientoRepository>();
+
+
+
+
 
 var app = builder.Build();
 

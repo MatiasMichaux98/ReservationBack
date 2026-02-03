@@ -38,6 +38,14 @@ namespace App.Infrastructure.Repositories
             return pelicula;
         }
 
+        public async Task<List<Pelicula>> GetPeliculaByGenero(int idGenero)
+        {
+            var peliculas = await _context.Peliculas
+                .Where(g => g.GeneroID == idGenero)
+                .ToListAsync();
+            return peliculas;
+        }
+
         public async Task<List<Pelicula>> GetPeliculas()
         {
             var peliculas = await _context.Peliculas.ToListAsync();

@@ -13,6 +13,13 @@ namespace App.Infrastructure.Repositories
         {
             _context = context;
         }
+
+        public async Task<Asiento> GetAsiento(int idasiento)
+        {
+            var asiento = await _context.Asientos.FindAsync(idasiento);
+            return asiento;
+        }
+
         public async Task<List<Asiento>> GetAsientosBySala(int IdSala)
         {
             var asientos = await _context.Asientos

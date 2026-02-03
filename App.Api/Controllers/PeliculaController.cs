@@ -1,6 +1,5 @@
 ﻿using App.Application.Common.Interface;
 using App.Application.Common.ModelsDtos.DtoPelicula;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Api.Controllers
@@ -28,6 +27,13 @@ namespace App.Api.Controllers
             var peliculas = await _perliculaService.GetPelicula(id);
             return Ok(peliculas);
         }
+        [HttpGet("Genero/{id}")]
+        public async Task<IActionResult> GetPeliculaByGenero(int id)
+        {
+            var peliculas = await _perliculaService.GetPeliculasByGenero(id);
+            return Ok(peliculas);
+        }
+
         [HttpPost]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreatePeliculas([FromForm] CreateMovieDto model)

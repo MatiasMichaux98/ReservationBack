@@ -1,6 +1,7 @@
 ﻿using App.Application.Common.Interface;
 using App.Application.Common.ModelsDtos.DtoPelicula;
 using App.Domain.Entitie;
+using App.Infrastructure.Exceptions;
 
 namespace App.Application.Service
 {
@@ -34,10 +35,7 @@ namespace App.Application.Service
             }
 
             var genero = await _generoRepository.GetGenero(model.GeneroID);
-            if(genero == null)
-            {
-                throw new Exception("No se encontro el genero");
-            }
+            if(genero == null) throw new BussinessExceptions("No exiten el genero");
 
             var pelicula = new Pelicula
             {
@@ -64,10 +62,8 @@ namespace App.Application.Service
         public async Task<bool> DeletePelicula(int id)
         {
             var pelicula = await _peliculaRepository.GetPelicula(id);
-            if(pelicula == null)
-            {
-                throw new Exception("Pelicula no encontrada");
-            }
+            if(pelicula == null) throw new BussinessExceptions("No exiten la pelicula");
+
             await _peliculaRepository.DeletePelicula(pelicula.ID);
             
             return true;
@@ -76,10 +72,8 @@ namespace App.Application.Service
         public async Task<ResponseDto> GetPelicula(int id)
         {
             var pelicula = await _peliculaRepository.GetPelicula(id);
-            if(pelicula == null)
-            {
-                throw new Exception("Pelicula no encontrada");
-            }
+            if(pelicula == null) throw new BussinessExceptions("No exiten la pelicula");
+            
             return new ResponseDto
             {
                 ID = pelicula.ID,
@@ -111,13 +105,27 @@ namespace App.Application.Service
             }).ToList();
         }
 
+        public async Task<List<ResponseDto>> GetPeliculasByGenero(int idGenero)
+        {
+            var peliculas = await _peliculaRepository.GetPeliculaByGenero(idGenero);
+            if (peliculas == null) throw new BussinessExceptions("No exiten esas peliculas");
+          
+            return peliculas.Select(p => new ResponseDto
+            {
+                ID = p.ID,
+                Nombre = p.Nombre,
+                Descripcion = p.Descripcion,
+                Imagen = p.Imagen,
+                DuracionMinutos = p.DuracionMinutos,
+                AñoLanzamiento = p.AñoLanzamiento,
+                GeneroID = p.GeneroID
+            }).ToList();
+        }
+
         public async Task<ResponseDto> UpdatePelicula(UpdateMovieDto model, int id)
         {
             var movie = await _peliculaRepository.GetPelicula(id);
-            if (movie == null)
-            {
-                throw new Exception($"La pelicula con ID: {id} no fue encontrada");
-            }
+            if (movie == null) throw new BussinessExceptions($"La pelicula con ID: {id} no fue encontrada");
 
             if (!string.IsNullOrWhiteSpace(model.Nombre)&& model.Nombre != "string")
             {
@@ -139,11 +147,8 @@ namespace App.Application.Service
             if (model.GeneroID.HasValue && model.GeneroID.Value > 0)
             {
                 var genero = await _generoRepository.GetGenero(model.GeneroID.Value);
-                if(genero == null)
-                {
-                    throw new Exception($"El género con ID {model.GeneroID} no existe");
+                if(genero == null) throw new BussinessExceptions($"El género con ID {model.GeneroID} no existe");
 
-                }
                 movie.GeneroID = model.GeneroID.Value;
             }
 
