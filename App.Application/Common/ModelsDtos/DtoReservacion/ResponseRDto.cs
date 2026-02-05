@@ -14,6 +14,8 @@ namespace App.Application.Common.ModelsDtos.DtoReservacion
         public string Usuario { get; set; }
         public required int IdAsiento { get; set; }
         public string estadoReserva { get; set; }
+        public string? CanceladaPor { get; set; }
+        public DateTime? FechaCancelacionUtc { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -12,6 +12,8 @@ namespace App.Domain.Entitie
         public Pelicula pelicula { get; set; }
         public int IdSala { get; set; }
         public Sala sala { get; set; }
+        public bool isDeleted { get; set; }
+        public DateTime DeleteTimeUtc { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly HoraInicio { get; set; }
         public TimeOnly HoraFinal { get; set; }

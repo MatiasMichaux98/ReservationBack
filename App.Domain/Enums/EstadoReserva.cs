@@ -10,8 +10,8 @@ namespace App.Domain.Enums
     {
         Reservada,
         Pagada,
-        Cancelada,
-        Expirada
+        Cancelada
+       
 
     }
 }

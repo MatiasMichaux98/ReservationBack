@@ -10,6 +10,8 @@ namespace App.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<Horario> builder)
         {
 
+            builder.HasQueryFilter(a => !a.isDeleted);
+
             //relaciones
             builder.HasOne(h => h.pelicula)
                 .WithMany(h => h.horarios)

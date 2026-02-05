@@ -26,6 +26,12 @@ namespace App.Api.Controllers
             var reservaciones = await _reservacionService.GetReservaciones();
             return Ok(reservaciones);
         }
+        [HttpGet("reservacionesCanceladas")]
+        public async Task<IActionResult> GetReservacionesCanceladas()
+        {
+            var reservaciones = await _reservacionService.GetReservacionesCanceladas();
+            return Ok(reservaciones);
+        }
         [HttpGet("/ByHorario/{id}")]
         public async Task<IActionResult> GetReservacionesByHorario(int id)
         {

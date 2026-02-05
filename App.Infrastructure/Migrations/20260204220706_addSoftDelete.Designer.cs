@@ -4,6 +4,7 @@ using App.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace App.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260204220706_addSoftDelete")]
+    partial class addSoftDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,9 +186,6 @@ namespace App.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<DateTime>("DeleteTimeUtc")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateOnly>("Fecha")
                         .HasColumnType("date");
 
@@ -200,9 +200,6 @@ namespace App.Infrastructure.Migrations
 
                     b.Property<int>("IdSala")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("ID");
 
@@ -224,7 +221,7 @@ namespace App.Infrastructure.Migrations
                     b.Property<int>("IdAsiento")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdHorario")
+                    b.Property<int>("IdHorario")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsReserved")
@@ -283,19 +280,13 @@ namespace App.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("CanceladaPor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaCancelacionUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdAsiento")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdHorario")
+                    b.Property<int>("IdHorario")
                         .HasColumnType("int");
 
                     b.Property<string>("IdUsuario")
@@ -582,7 +573,8 @@ namespace App.Infrastructure.Migrations
                     b.HasOne("App.Domain.Entitie.Horario", "horario")
                         .WithMany("horarioAsientos")
                         .HasForeignKey("IdHorario")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("asiento");
 
@@ -611,7 +603,8 @@ namespace App.Infrastructure.Migrations
                     b.HasOne("App.Domain.Entitie.Horario", "horario")
                         .WithMany("reservaciones")
                         .HasForeignKey("IdHorario")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("asiento");
 

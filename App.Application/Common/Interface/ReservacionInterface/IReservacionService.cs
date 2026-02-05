@@ -6,6 +6,7 @@ namespace App.Application.Common.Interface.ReservacionInterface
     public interface IReservacionService
     {
         Task<List<ResponseRDto>> GetReservaciones();
+        Task<List<ResponseRDto>> GetReservacionesCanceladas();
         Task<ResponseRDto> GetReservacionID(int id);
         Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto);
         Task<ResponseRDto> UpdateReservacion(UpdateReservacionDto dto, int id);

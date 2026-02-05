@@ -72,6 +72,7 @@ using App.Infrastructure.Exceptions;
                 IdPelicula = newhorario.IdPelicula,
                 IdSala = newhorario.IdSala,
                 Fecha = newhorario.Fecha,
+                isDelete = newhorario.isDeleted,
                 HoraInicio = newhorario.HoraInicio,
                 HoraFinal = newhorario.HoraFinal
             };
@@ -101,6 +102,8 @@ using App.Infrastructure.Exceptions;
                 IdPelicula = horario.IdPelicula,
                 IdSala = horario.IdSala,
                 Fecha = horario.Fecha,
+                isDelete = horario.isDeleted,
+                DeleteTimeUtc = horario.DeleteTimeUtc,
                 HoraInicio = horario.HoraInicio,
                 HoraFinal = horario.HoraFinal
             };
@@ -119,10 +122,32 @@ using App.Infrastructure.Exceptions;
                 IdPelicula = p.IdPelicula,
                 IdSala = p.IdSala,
                 Fecha = p.Fecha,
+                isDelete = p.isDeleted,
+                DeleteTimeUtc = p.DeleteTimeUtc,
                 HoraInicio = p.HoraInicio,
                 HoraFinal = p.HoraFinal
             }).ToList();
 
+        }
+
+        public async Task<List<ResponseHorarioDto>> GetHorariosCancelados()
+        {
+            var horarios = await _horarioRepository.GetHorariosCancelados();
+            if (horarios == null)
+            {
+                throw new BussinessExceptions("Los horarios no existen");
+            }
+            return horarios.Select(p => new ResponseHorarioDto
+            {
+                id = p.ID,
+                IdPelicula = p.IdPelicula,
+                IdSala = p.IdSala,
+                Fecha = p.Fecha,
+                isDelete = p.isDeleted,
+                DeleteTimeUtc = p.DeleteTimeUtc,
+                HoraInicio = p.HoraInicio,
+                HoraFinal = p.HoraFinal
+            }).ToList();
         }
 
         public async Task<ResponseHorarioDto> UpdateHorario(UpdateHorarioDto model, int id)
@@ -155,6 +180,7 @@ using App.Infrastructure.Exceptions;
                 IdPelicula = horario.IdPelicula,
                 IdSala = horario.IdSala,
                 Fecha = horario.Fecha,
+                isDelete = horario.isDeleted,
                 HoraInicio = horario.HoraInicio,
                 HoraFinal = horario.HoraFinal
             };

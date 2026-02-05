@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entitie;
+using App.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,6 +10,8 @@ namespace App.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Reservacion> builder)
         {
+            builder.HasQueryFilter(a => a.estadoReserva != EstadoReserva.Cancelada);
+
             //relaciones
             builder.HasOne(h => h.horario)
                   .WithMany(h => h.reservaciones)

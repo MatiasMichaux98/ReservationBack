@@ -1,13 +1,8 @@
 ﻿using App.Application.Common.Interface;
 using App.Domain.Entitie;
 using App.Infrastructure.Data;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Infrastructure.Repositories
 {
@@ -29,6 +24,7 @@ namespace App.Infrastructure.Repositories
         {
             var pelicula = await _context.Peliculas.FindAsync(id);
             _context.Peliculas.Remove(pelicula);
+            await _context.SaveChangesAsync();
             return true;
         }
 

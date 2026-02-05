@@ -1,5 +1,6 @@
 ﻿using App.Application.Common.Interface.HorarioInterface;
 using App.Domain.Entitie;
+using App.Domain.Enums;
 using App.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,7 +23,19 @@ namespace App.Infrastructure.Repositories
         public async Task<bool> DeleteHorario(int id)
         {
             var horario = await _context.Horarios.FindAsync(id);
-            _context.Horarios.Remove(horario);
+            // _context.Horarios.Remove(horario);
+            horario.isDeleted = true;
+            horario.DeleteTimeUtc = DateTime.UtcNow;
+            var reservas = await _context.Reservaciones
+                .Where(r => r.IdHorario == id)
+                .ToListAsync();
+            foreach(var a in reservas)
+            {
+                a.estadoReserva = EstadoReserva.Cancelada;
+                a.CanceladaPor = "Administrador";
+                a.CreatedAt = DateTime.UtcNow;
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -36,6 +49,15 @@ namespace App.Infrastructure.Repositories
         public async Task<List<Horario>> GetHorarios()
         {
             var horarios = await _context.Horarios.ToListAsync();
+            return horarios;
+        }
+
+        public async Task<List<Horario>> GetHorariosCancelados()
+        {
+            var horarios = await _context.Horarios
+                .Where(h => h.isDeleted == true)
+                .IgnoreQueryFilters()
+                .ToListAsync();
             return horarios;
         }
 

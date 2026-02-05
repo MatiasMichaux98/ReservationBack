@@ -85,8 +85,26 @@ namespace App.Application.Service
                 Horario = r.horario.HoraInicio,
                 IdAsiento = r.IdAsiento,
                 Usuario = r.IdUsuario,
-                Pelicula = r.horario.pelicula.Nombre,
-                Sala = r.horario.sala.Nombre,
+                Pelicula = r.horario?.pelicula?.Nombre,
+                Sala = r.horario?.sala?.Nombre,
+                estadoReserva = r.estadoReserva.ToString(),
+                CreatedAt = r.CreatedAt
+
+            }).ToList();
+        }
+        public async Task<List<ResponseRDto>> GetReservacionesCanceladas()
+        {
+            var reservaciones = await _reservationRepository.GetReservacionesCanceladas();
+            if (reservaciones == null) throw new BussinessExceptions("No existe las reservaciones");
+
+            return reservaciones.Select(r => new ResponseRDto
+            {
+                IdReservacion = r.ID,
+                Horario = r.horario.HoraInicio,
+                IdAsiento = r.IdAsiento,
+                Usuario = r.IdUsuario,
+                Pelicula = r.horario?.pelicula?.Nombre,
+                Sala = r.horario?.sala?.Nombre,
                 estadoReserva = r.estadoReserva.ToString(),
                 CreatedAt = r.CreatedAt
 
@@ -133,5 +151,7 @@ namespace App.Application.Service
         {
             throw new NotImplementedException();
         }
+
+       
     }
 }

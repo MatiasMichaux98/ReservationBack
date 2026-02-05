@@ -13,6 +13,8 @@ namespace App.Application.Common.ModelsDtos.DtoHorario
         public int id { get; set; }
         public int IdPelicula { get; set; }
         public int IdSala { get; set; }
+        public bool isDelete { get; set; }
+        public DateTime DeleteTimeUtc { get; set; }
         public DateOnly Fecha { get; set; }
         public TimeOnly HoraInicio { get; set; }
         public TimeOnly HoraFinal { get; set; }

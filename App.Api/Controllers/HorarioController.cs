@@ -20,6 +20,12 @@ namespace App.Api.Controllers
             var horarios = await _horarioService.GetHorarios();
             return Ok(horarios);
         }
+        [HttpGet("HorariosCancelados")]
+        public async Task<IActionResult> GetHorariosCancelados()
+        {
+            var horarios = await _horarioService.GetHorariosCancelados();
+            return Ok(horarios);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetHorarioID(int id)
         {

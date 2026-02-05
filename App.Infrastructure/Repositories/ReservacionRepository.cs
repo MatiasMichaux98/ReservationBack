@@ -37,7 +37,18 @@ namespace App.Infrastructure.Repositories
                 .ToListAsync();
             return reservacion;
         }
-
+        public async Task<List<Reservacion>> GetReservacionesCanceladas()
+        {
+            var reservacion = await _context.Reservaciones
+                .Include(h => h.horario)
+                .ThenInclude(p => p.pelicula)
+                .Include(h => h.horario)
+                .ThenInclude(a => a.sala)
+                .Where(r => r.estadoReserva == Domain.Enums.EstadoReserva.Cancelada)
+                .IgnoreQueryFilters()
+                .ToListAsync();
+            return reservacion;
+        }
         public async Task<List<Reservacion>> GetReservacionByHorario(int IdHorario)
         {
             var reservacion = await _context.Reservaciones
@@ -46,6 +57,7 @@ namespace App.Infrastructure.Repositories
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
                 .Where(p => p.IdHorario == IdHorario)
+                .IgnoreQueryFilters()
                 .ToListAsync();
             return reservacion;
         }
@@ -57,6 +69,7 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(p => p.ID == idreservacion);
             return reservacion;
         }
