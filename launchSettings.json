@@ -3,8 +3,10 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeProjectName": "debug-vs",
       "serviceActions": {
-        "app.api": "StartDebugging"
+        "app.api": "StartDebugging",
+        "Products_Db": "None"
       }
     }
   }
