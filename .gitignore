@@ -1,6 +1,10 @@
 ## Compilación y binarios
 bin/
 obj/
+*.mdf
+*.ldf
+*.ndf
+.containers/database/
 *.exe
 *.dll
 *.pdb
