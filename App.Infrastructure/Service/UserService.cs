@@ -1,13 +1,18 @@
 ﻿using App.Application.Common.Interface.AuthInterface;
 using App.Application.Common.ModelsDtos.DtoAuth;
 using App.Domain.Constans;
+using App.Domain.Entitie;
+using App.Infrastructure.Data;
 using App.Infrastructure.Entitie;
 using App.Infrastructure.Settings;
+using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace App.Infrastructure.Service
@@ -17,11 +22,14 @@ namespace App.Infrastructure.Service
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWT _jwt;
-        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt)
+        private readonly ApplicationDbContext _context;
+        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwt = jwt.Value;
+            _context = context;
         }
 
         public async Task<string> RegisterAsync(RegisterModel model)
@@ -70,6 +78,22 @@ namespace App.Infrastructure.Service
                 authenticationModel.UserName = user.UserName;
                 var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
                 authenticationModel.Roles = rolesList.ToList();
+               if(user.refreshTokens.Any(a => a.IsActive))
+                {
+                    var activeRefrestToken = user.refreshTokens.Where(a => a.IsActive == true).FirstOrDefault();
+                    authenticationModel.RefreshToken = activeRefrestToken.Token;
+                    authenticationModel.RefreshTokenExpiration = activeRefrestToken.Expires;
+                }
+                else
+                {
+                    var refreshToken = CreateRefreshToken();
+                    authenticationModel.RefreshToken = refreshToken.Token;
+                    authenticationModel.RefreshTokenExpiration = refreshToken.Expires;
+                    user.refreshTokens.Add(refreshToken);
+                    _context.Update(user);
+                    _context.SaveChanges();
+                }
+                
                 return authenticationModel;
             }
             authenticationModel.IsAuthenticated = false;
@@ -110,6 +134,60 @@ namespace App.Infrastructure.Service
             return jwtSecurityToken;
         }
 
-        
+        private RefreshTokenModel CreateRefreshToken()
+        {
+            var randomNumber = new Byte[32];
+            using var rng = RandomNumberGenerator.Create();
+
+            rng.GetBytes(randomNumber);
+            return new RefreshTokenModel
+            {
+                Token = Convert.ToBase64String(randomNumber),
+                Expires = DateTime.UtcNow.AddDays(10),
+                Created = DateTime.UtcNow
+            };
+        }
+
+        public async Task<AuthenticateModel> RefreshTokenAsync(string token)
+        {
+            var authenticationModel = new AuthenticateModel();
+           
+            var user = _context.Users.SingleOrDefault(u => u.refreshTokens.Any(t => t.Token == token));
+            if (user == null)
+            {
+                authenticationModel.IsAuthenticated = false;
+                authenticationModel.Message = $"No hay cuentas registrada";
+                return authenticationModel;
+            }
+
+            var refreshToken = user.refreshTokens.Single(x => x.Token == token);
+            
+            if (!refreshToken.IsActive)
+            {
+                authenticationModel.IsAuthenticated = false;
+                authenticationModel.Message = $"Token no esta activo";
+                return authenticationModel;
+            }
+
+            //revocar refreshtoken 
+            refreshToken.Revoked = DateTime.UtcNow;
+            //generar nuevo refresh y guardarlo 
+            var newRefreshToken = CreateRefreshToken();
+            user.refreshTokens.Add(newRefreshToken);
+            _context.Update(user);
+            _context.SaveChanges();
+
+            //generate new jwt 
+            authenticationModel.IsAuthenticated = true;
+            JwtSecurityToken jwtSecurityToken = await CreateJwtToken(user);
+            authenticationModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            authenticationModel.Email = user.Email;
+            authenticationModel.UserName = user.UserName;
+            var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            authenticationModel.Roles = rolesList.ToList();
+            authenticationModel.RefreshToken = newRefreshToken.Token;
+            authenticationModel.RefreshTokenExpiration = newRefreshToken.Expires;
+            return authenticationModel;
+        }
     }
 }

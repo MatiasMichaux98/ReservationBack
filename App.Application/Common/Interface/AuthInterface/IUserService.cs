@@ -8,6 +8,7 @@ namespace App.Application.Common.Interface.AuthInterface
     {
         Task<string> RegisterAsync(RegisterModel model);
         Task<AuthenticateModel> LoginAsync(LoginModel model);
+        Task<AuthenticateModel> RefreshTokenAsync(string token);
 
     }
 }

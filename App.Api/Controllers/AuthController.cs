@@ -16,6 +16,15 @@ namespace App.Api.Controllers
         {
             _userService = userService;
         }
+        private void SaveRefreshTokenInCookie(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(10)
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
 
         [Authorize]
         [HttpGet]
@@ -28,6 +37,7 @@ namespace App.Api.Controllers
         public async Task<IActionResult> Login(LoginModel model)
         {
             var result = await _userService.LoginAsync(model);
+            SaveRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
 
@@ -38,6 +48,18 @@ namespace App.Api.Controllers
 
             var result = await _userService.RegisterAsync(model);
             return Ok(result);
+        }
+
+        [HttpPost("refreshToken")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var response = await _userService.RefreshTokenAsync(refreshToken);
+            if (!string.IsNullOrEmpty(response.RefreshToken))
+            {
+                SaveRefreshTokenInCookie(response.RefreshToken);
+            }
+            return Ok(response);
         }
     }
 }
