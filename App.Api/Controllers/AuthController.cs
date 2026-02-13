@@ -3,6 +3,7 @@ using App.Application.Common.ModelsDtos.DtoAuth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace App.Api.Controllers
 {
@@ -60,6 +61,21 @@ namespace App.Api.Controllers
                 SaveRefreshTokenInCookie(response.RefreshToken);
             }
             return Ok(response);
+        }
+        [HttpPost("revoke-token")]
+        public  async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest model)
+        {
+            var token = model.Token ?? Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { Message = "Token es requerido " });
+
+            var response = _userService.revokeToken(token);
+            if (!response)
+            {
+                return NotFound(new { messege = "Token no encontrado" });
+            }
+           
+            return Ok(new { message = "Token revoked" });
         }
     }
 }

@@ -189,5 +189,19 @@ namespace App.Infrastructure.Service
             authenticationModel.RefreshTokenExpiration = newRefreshToken.Expires;
             return authenticationModel;
         }
+
+        public  bool revokeToken(string token)
+        {
+            var user =  _context.Users.SingleOrDefault(u => u.refreshTokens.Any(t => t.Token == token));
+            if (user == null) return false;
+
+            var refreshtoken = user.refreshTokens.Single(x => x.Token == token);
+            if (!refreshtoken.IsActive) return false;
+
+            refreshtoken.Revoked = DateTime.UtcNow;
+            _context.Update(user);
+            _context.SaveChanges();
+            return true;
+        }
     }
 }
