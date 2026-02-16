@@ -9,7 +9,7 @@ namespace App.Domain.Enums
     public enum EstadoReserva
     {
         Reservada,
-        Pagada,
+        Pendiente,
         Cancelada
        
 

@@ -9,13 +9,14 @@ namespace App.Domain.Entitie
         [Key]
         public int ID { get; set; }
         public int? IdHorario { get; set; }
-        public Horario? horario { get; set; }
+        public Horario horario { get; set; } = null!;
         public int IdAsiento { get; set; }
-        public Asiento asiento { get; set; }
+        public Asiento asiento { get; set; } = null!;
         public string IdUsuario { get; set; }
         public string? CanceladaPor { get; set; }
         public DateTime? FechaCancelacionUtc { get; set;}
-        public EstadoReserva estadoReserva { get; set;  }
+        public EstadoReserva estadoReserva { get; set;}
+        public DateTime ExpiraEn { get; set; }
         public DateTime CreatedAt { get; set; }
 
     }

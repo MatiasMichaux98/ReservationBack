@@ -1,6 +1,8 @@
-﻿using App.Application.Common.Interface.HorarioAsientoInterface;
+﻿using App.Application.Common.Interface.AsientoInterface;
+using App.Application.Common.Interface.HorarioAsientoInterface;
 using App.Application.Common.Interface.HorarioInterface;
 using App.Application.Common.Interface.ReservacionInterface;
+using App.Application.Common.ModelsDtos.DtoAsiento;
 using App.Application.Common.ModelsDtos.DtoReservacion;
 using App.Domain.Entitie;
 using App.Domain.Enums;
@@ -15,16 +17,16 @@ namespace App.Application.Service
         private readonly IHorarioAsientoRepository _horarioAsientoRepository;
         public ReservacionService(IReservationRepository reservationRepository,
                                   IHorarioRepository horarioRepository,
-                                  IHorarioAsientoRepository horarioAsientoRepository
+                                  IHorarioAsientoRepository horarioAsientoRepository,
+                                  IAsientoRepository asientoRepository
                                    )
         {
             _reservationRepository = reservationRepository;
             _horarioRepository = horarioRepository;
             _horarioAsientoRepository = horarioAsientoRepository;
         }
-        public async Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto)
+        public async Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto, string IdUser)
         {
-            var userId = "idtemporal";
 
             var horario = await _horarioRepository.GetHorario(dto.IdHorario);
             if (horario == null) throw new BussinessExceptions("No existe el horario");
@@ -32,20 +34,30 @@ namespace App.Application.Service
             var horarioAsiento = await _horarioAsientoRepository
                                     .GetValidacion(dto.IdHorario, dto.IdAsiento);
             if (horarioAsiento == null) throw new BussinessExceptions($"No se puede reservar el asiento con ID:{dto.IdAsiento}");
-            
-            if (DateTime.Now >= horario.Fecha.ToDateTime(horario.HoraInicio)) 
-                throw new BussinessExceptions("No se puede reservar la funcion ya comenzo");
-            
+            var existePendiente = await _reservationRepository.ExistePendiente(dto.IdHorario, dto.IdAsiento);
+            if (existePendiente) throw new BussinessExceptions("El asiento ya tiene una reserva pendiente");
+            var fechaAhora = DateTime.Now;
+            var horaInicio = horario.Fecha.ToDateTime(horario.HoraInicio);
+            var horaFinal = horario.Fecha.ToDateTime(horario.HoraFinal);
 
-            horarioAsiento.IsReserved = true;
+            if(horaFinal <= horaInicio)
+            {
+                horaFinal = horaFinal.AddDays(1);
+            }
+            if (fechaAhora >= horaFinal)
+                throw new BussinessExceptions("No se puede reservar, la funcion ya termino.");
+            else if  (fechaAhora >= horaInicio) 
+                throw new BussinessExceptions("No se puede reservar, la funcion ya comenzo.");
 
+            var ahora = DateTime.Now;
             var newReseracion = new Reservacion
             {
                 IdHorario = dto.IdHorario,
                 IdAsiento = dto.IdAsiento,
-                IdUsuario = userId,
-                estadoReserva = EstadoReserva.Reservada,
-                CreatedAt = DateTime.UtcNow
+                IdUsuario = IdUser,
+                estadoReserva = EstadoReserva.Pendiente,
+                CreatedAt = ahora,
+                ExpiraEn = ahora.AddMinutes(1)
             };
 
             await _reservationRepository.CreateReservacion(newReseracion);
@@ -56,16 +68,50 @@ namespace App.Application.Service
             {
                 IdReservacion = newReserva.ID,
                 Horario = newReserva.horario.HoraInicio,
-                IdAsiento = newReserva.IdAsiento,
                 Usuario = newReserva.IdUsuario,
                 Pelicula = newReserva.horario.pelicula.Nombre,
                 Sala = newReserva.horario.sala.Nombre,
                 estadoReserva = newReserva.estadoReserva.ToString(),
-                CreatedAt = newReserva.CreatedAt
+                CreatedAt = newReserva.CreatedAt,
+                asiento = new asientoResponse
+                {
+                    ID = newReserva.asiento.ID,
+                    NumeroAsiento = newReserva.asiento.NumeroAsiento
+                }
             };
             return response;
         }
+        public async Task<ResponseRDto> ConfirmarReservacion(int IdReservacion)
+        {
+            
+            var reservacion = await _reservationRepository.GetReservacionID(IdReservacion);
+            var horarioasiento = await _horarioAsientoRepository.GetHorarioAsiento(reservacion.IdHorario.Value,reservacion.IdAsiento);
+            if (reservacion == null) throw new BussinessExceptions("No existe la reservacion");
 
+            if (reservacion.estadoReserva != EstadoReserva.Pendiente)
+                throw new BussinessExceptions("No se puede Confirmar");
+            if (horarioasiento == null) throw new BussinessExceptions("No existe el asiento para este horario");
+
+            reservacion.estadoReserva = EstadoReserva.Reservada;
+            horarioasiento.IsReserved = true;
+
+            await _reservationRepository.UpdateReservacion(reservacion);
+            return new ResponseRDto
+            {
+                IdReservacion = reservacion.ID,
+                Horario = reservacion.horario.HoraInicio,
+                Usuario = reservacion.IdUsuario,
+                Pelicula = reservacion.horario.pelicula.Nombre,
+                Sala = reservacion.horario.sala.Nombre,
+                estadoReserva = reservacion.estadoReserva.ToString(),
+                CreatedAt = reservacion.CreatedAt,
+                asiento = new asientoResponse
+                {
+                    ID = reservacion.asiento.ID,
+                    NumeroAsiento = reservacion.asiento.NumeroAsiento
+                }
+            };
+        }
         public async Task<bool> DeleteReservacion(int id)
         {
             var reservacion = await _reservationRepository.GetReservacionID(id);
@@ -83,28 +129,32 @@ namespace App.Application.Service
             {
                 IdReservacion = r.ID,
                 Horario = r.horario.HoraInicio,
-                IdAsiento = r.IdAsiento,
+                asiento = new asientoResponse
+                {
+                    ID = r.asiento.ID,
+                    NumeroAsiento = r.asiento.NumeroAsiento
+                },
                 Usuario = r.IdUsuario,
-                Pelicula = r.horario?.pelicula?.Nombre,
-                Sala = r.horario?.sala?.Nombre,
+                Pelicula = r.horario.pelicula.Nombre,
+                Sala = r.horario.sala.Nombre,
                 estadoReserva = r.estadoReserva.ToString(),
                 CreatedAt = r.CreatedAt
 
             }).ToList();
         }
-        public async Task<List<ResponseRDto>> GetReservacionesCanceladas()
+        public async Task<List<ReservaCanceladaDto>> GetReservacionesCanceladas()
         {
             var reservaciones = await _reservationRepository.GetReservacionesCanceladas();
             if (reservaciones == null) throw new BussinessExceptions("No existe las reservaciones");
 
-            return reservaciones.Select(r => new ResponseRDto
+            return reservaciones.Select(r => new ReservaCanceladaDto
             {
                 IdReservacion = r.ID,
                 Horario = r.horario.HoraInicio,
                 IdAsiento = r.IdAsiento,
                 Usuario = r.IdUsuario,
-                Pelicula = r.horario?.pelicula?.Nombre,
-                Sala = r.horario?.sala?.Nombre,
+                Pelicula = r.horario.pelicula.Nombre,
+                Sala = r.horario.sala.Nombre,
                 estadoReserva = r.estadoReserva.ToString(),
                 CreatedAt = r.CreatedAt
 
@@ -119,7 +169,11 @@ namespace App.Application.Service
             {
                 IdReservacion = r.ID,
                 Horario = r.horario.HoraInicio,
-                IdAsiento = r.IdAsiento,
+                asiento = new asientoResponse
+                {
+                    ID = r.asiento.ID,
+                    NumeroAsiento = r.asiento.NumeroAsiento
+                },
                 Usuario = r.IdUsuario,
                 Pelicula = r.horario.pelicula.Nombre,
                 Sala = r.horario.sala.Nombre,
@@ -138,7 +192,11 @@ namespace App.Application.Service
             {
                 IdReservacion = reservacion.ID,
                 Horario = reservacion.horario.HoraInicio,
-                IdAsiento = reservacion.IdAsiento,
+                asiento = new asientoResponse
+                {
+                    ID = reservacion.asiento.ID,
+                    NumeroAsiento = reservacion.asiento.NumeroAsiento
+                },
                 Usuario = reservacion.IdUsuario,
                 Pelicula = reservacion.horario.pelicula.Nombre,
                 Sala = reservacion.horario.sala.Nombre,
@@ -147,11 +205,7 @@ namespace App.Application.Service
             };
         }
 
-        public Task<ResponseRDto> UpdateReservacion(UpdateReservacionDto dto, int id)
-        {
-            throw new NotImplementedException();
-        }
-
+       
        
     }
 }

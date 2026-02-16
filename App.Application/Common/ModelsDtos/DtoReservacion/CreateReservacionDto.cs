@@ -7,7 +7,5 @@ namespace App.Application.Common.ModelsDtos.DtoReservacion
     {
         public int IdHorario { get; set; }
         public int IdAsiento { get; set; }
-     //   public string IdUsuario { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 }

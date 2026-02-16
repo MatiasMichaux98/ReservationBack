@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using App.Application.Common.Interface.AuthInterface;
 using App.Infrastructure.Service;
+using App.Application.Common.Interface.UsuarioInterface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuracion JWT
@@ -75,6 +76,8 @@ builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IAsientoService, AsientoService>();
 builder.Services.AddScoped<IAsientoRepository, AsientoRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUsuariosService, UsuariosServices>();
+
 
 
 var app = builder.Build();

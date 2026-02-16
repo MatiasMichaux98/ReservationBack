@@ -39,5 +39,15 @@ namespace App.Infrastructure.Repositories
 
             return asientohorario;
         }
+
+        public async Task<HorarioAsiento> GetHorarioAsiento(int horarioId, int AsientoId)
+        {
+            var asientohorario = await _context.HorarioAsientos
+                .SingleOrDefaultAsync(s => s.IdHorario == horarioId
+                                        && s.IdAsiento == AsientoId
+                                        );
+
+            return asientohorario;
+        }
     }
 }

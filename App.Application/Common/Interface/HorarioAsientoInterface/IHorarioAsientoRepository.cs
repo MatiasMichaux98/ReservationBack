@@ -10,7 +10,8 @@ namespace App.Application.Common.Interface.HorarioAsientoInterface
     public interface IHorarioAsientoRepository
     {
         public Task<HorarioAsiento> GetAsiento(int idasiento, int idHorario);
-        public Task<HorarioAsiento> GetValidacion(int horarioId, int AsientoId);
+        public Task<HorarioAsiento> GetValidacion(int horarioId, int AsientoId); 
+        public Task<HorarioAsiento> GetHorarioAsiento(int horarioId, int AsientoId); 
         public  Task<HorarioAsiento> CreateAsync(HorarioAsiento horarioAsiento);
     }
 }

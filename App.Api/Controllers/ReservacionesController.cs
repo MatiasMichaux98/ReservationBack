@@ -1,6 +1,8 @@
 ﻿using App.Application.Common.Interface.ReservacionInterface;
 using App.Application.Common.ModelsDtos.DtoReservacion;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace App.Api.Controllers
 {
@@ -14,10 +16,21 @@ namespace App.Api.Controllers
             _reservacionService = reservacionService;
         }
 
-        [HttpPost]
+        [Authorize]
+        [HttpPost("CrearReserva")]
         public async Task<IActionResult> CreateReservacion(CreateReservacionDto dto)
         {
-            var reservacion = await _reservacionService.CreateReservacion(dto);
+            var IdUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(IdUser)) return Unauthorized();
+
+            var reservacion = await _reservacionService.CreateReservacion(dto, IdUser);
+            return Ok(reservacion);
+        }
+        [Authorize]
+        [HttpPut("ConfirmarReserva/{IdReservacion}")]
+        public async Task<IActionResult> ConfirmarReservacion(int IdReservacion)
+        {
+            var reservacion = await _reservacionService.ConfirmarReservacion(IdReservacion);
             return Ok(reservacion);
         }
         [HttpGet]

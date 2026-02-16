@@ -1,9 +1,5 @@
 ﻿using App.Domain.Entitie;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace App.Application.Common.Interface.ReservacionInterface
 {
@@ -13,9 +9,12 @@ namespace App.Application.Common.Interface.ReservacionInterface
         Task<List<Reservacion>> GetReservacionesCanceladas();
         Task<Reservacion> GetReservacionID(int id);
         Task<Reservacion> CreateReservacion(Reservacion reservacion);
+        Task<Reservacion> UpdateReservacion(Reservacion reservacion);
         Task<bool> DeleteReservacion(Reservacion reservacion);
         // Task<Reservacion> GetReservacionByUsuario(int IdUsuario);
         Task<List<Reservacion>> GetReservacionByHorario(int IdHorario);
+        Task<bool> ExistePendiente(int idHorario, int idAsiento);
+
 
     }
 }

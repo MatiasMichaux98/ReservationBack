@@ -19,7 +19,12 @@ namespace App.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return reservacion;
         }
-
+        public async Task<Reservacion> UpdateReservacion(Reservacion reservacion)
+        {
+            _context.Reservaciones.Update(reservacion);
+            await _context.SaveChangesAsync();
+            return reservacion;
+        }
         public async Task<bool> DeleteReservacion(Reservacion reservacion)
         {
             _context.Reservaciones.Remove(reservacion);
@@ -34,8 +39,21 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
+                .Include(a => a.asiento)
                 .ToListAsync();
             return reservacion;
+        }
+        public async Task<bool> ExistePendiente(int idHorario, int idAsiento)
+        {
+            var ahora = DateTime.Now;
+            var reservacion = await _context.Reservaciones.AnyAsync(r =>
+            r.IdHorario == idHorario &&
+            r.IdAsiento == idAsiento &&
+            r.estadoReserva == Domain.Enums.EstadoReserva.Pendiente &&
+            r.ExpiraEn > ahora
+            );
+            return reservacion;
+                
         }
         public async Task<List<Reservacion>> GetReservacionesCanceladas()
         {
@@ -69,11 +87,12 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
+                .Include(a => a.asiento)
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(p => p.ID == idreservacion);
             return reservacion;
         }
 
-       
+        
     }
 }
