@@ -11,7 +11,7 @@ namespace App.Application.Common.Interface.ReservacionInterface
         Task<Reservacion> CreateReservacion(Reservacion reservacion);
         Task<Reservacion> UpdateReservacion(Reservacion reservacion);
         Task<bool> DeleteReservacion(Reservacion reservacion);
-        // Task<Reservacion> GetReservacionByUsuario(int IdUsuario);
+        Task<List<Reservacion>> GetReservacionByUsuario(string IdUsuario);
         Task<List<Reservacion>> GetReservacionByHorario(int IdHorario);
         Task<bool> ExistePendiente(int idHorario, int idAsiento);
 

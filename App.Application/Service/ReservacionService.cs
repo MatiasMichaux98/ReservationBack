@@ -182,7 +182,26 @@ namespace App.Application.Service
             }).ToList();
 
         }
-
+        public async Task<List<ResponseRDto>> GetReservacionesByUsuario(string IdUsuario)
+        {
+            var reservaciones = await _reservationRepository.GetReservacionByUsuario(IdUsuario);
+            if (reservaciones == null) throw new BussinessExceptions("No existe las reservaciones");
+            return reservaciones.Select(r => new ResponseRDto
+            {
+                IdReservacion = r.ID,
+                Horario = r.horario.HoraInicio,
+                asiento = new asientoResponse
+                {
+                    ID = r.asiento.ID,
+                    NumeroAsiento = r.asiento.NumeroAsiento
+                },
+                Usuario = r.IdUsuario,
+                Pelicula = r.horario.pelicula.Nombre,
+                Sala = r.horario.sala.Nombre,
+                estadoReserva = r.estadoReserva.ToString(),
+                CreatedAt = r.CreatedAt
+            }).ToList();
+        }
         public async Task<ResponseRDto> GetReservacionID(int id)
         {
             var reservacion = await _reservationRepository.GetReservacionID(id);
@@ -205,7 +224,6 @@ namespace App.Application.Service
             };
         }
 
-       
-       
+        
     }
 }

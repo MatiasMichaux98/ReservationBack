@@ -6,12 +6,14 @@ namespace App.Application.Common.Interface.ReservacionInterface
     public interface IReservacionService
     {
         Task<List<ResponseRDto>> GetReservaciones();
+        Task<List<ResponseRDto>> GetReservacionesByUsuario(string IdUsuario);
+        Task<List<ResponseRDto>> GetReservacionByHorario(int IdHorario);
         Task<List<ReservaCanceladaDto>> GetReservacionesCanceladas();
         Task<ResponseRDto> GetReservacionID(int id);
         Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto, string IdUser);
         Task<ResponseRDto> ConfirmarReservacion(int IdReservacion);
         Task<bool> DeleteReservacion(int id);
-        Task<List<ResponseRDto>> GetReservacionByHorario(int IdHorario);
+       
 
     }
 }

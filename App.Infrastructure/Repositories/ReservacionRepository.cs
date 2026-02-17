@@ -93,6 +93,17 @@ namespace App.Infrastructure.Repositories
             return reservacion;
         }
 
-        
+        public async Task<List<Reservacion>> GetReservacionByUsuario(string IdUsuario)
+        {
+            var reservaciones = await _context.Reservaciones
+                .Include(h => h.horario)
+                .ThenInclude(p => p.pelicula)
+                .Include(h => h.horario)
+                .ThenInclude(a => a.sala)
+                .Include(a => a.asiento)
+               .Where(p => p.IdUsuario == IdUsuario)
+               .ToListAsync();
+            return reservaciones;
+        }
     }
 }

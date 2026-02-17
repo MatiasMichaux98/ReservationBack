@@ -45,10 +45,27 @@ namespace App.Api.Controllers
             var reservaciones = await _reservacionService.GetReservacionesCanceladas();
             return Ok(reservaciones);
         }
-        [HttpGet("/ByHorario/{id}")]
+        [HttpGet("ByHorario/{id}")]
         public async Task<IActionResult> GetReservacionesByHorario(int id)
         {
             var reservaciones = await _reservacionService.GetReservacionByHorario(id);
+            return Ok(reservaciones);
+        }
+        [Authorize]
+        [HttpGet("mis-Reservaciones")]
+        public async Task<IActionResult> GetReservacionesByUsuario()
+        {
+            var UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(UserId)) return Unauthorized();
+
+            var reservaciones = await _reservacionService.GetReservacionesByUsuario(UserId);
+            return Ok(reservaciones);
+        }
+
+        [HttpGet("ByUsuario/{id}")]
+        public async Task<IActionResult> GetReservacionesByUsuario(string id)
+        {
+            var reservaciones = await _reservacionService.GetReservacionesByUsuario(id);
             return Ok(reservaciones);
         }
         [HttpGet("{id}")]
