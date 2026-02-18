@@ -10,5 +10,6 @@ namespace App.Application.Common.Interface.AuthInterface
         Task<AuthenticateModel> LoginAsync(LoginModel model);
         Task<AuthenticateModel> RefreshTokenAsync(string token);
         bool revokeToken(string token);
+        Task<bool> Logout(string token);
     }
 }

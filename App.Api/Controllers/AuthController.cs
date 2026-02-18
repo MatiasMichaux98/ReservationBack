@@ -17,14 +17,22 @@ namespace App.Api.Controllers
         {
             _userService = userService;
         }
-        private void SaveRefreshTokenInCookie(string refreshToken)
+        private CookieOptions GetRefreshTokenCookieOptions()
         {
-            var cookieOptions = new CookieOptions
+            return new CookieOptions
             {
                 HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(10)
+                Secure = false, // true en producción
+                SameSite = SameSiteMode.None,
+               
             };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
+        private void SaveRefreshTokenInCookie(string refreshToken)
+        {
+            var options = GetRefreshTokenCookieOptions();
+            options.Expires = DateTime.UtcNow.AddDays(10);
+   
+            Response.Cookies.Append("refreshToken", refreshToken, options);
         }
 
         [Authorize]
@@ -41,7 +49,6 @@ namespace App.Api.Controllers
             SaveRefreshTokenInCookie(result.RefreshToken);
             return Ok(result);
         }
-
 
         [HttpPost("register")]
         public async Task<ActionResult> RegisterAsync(RegisterModel model)
@@ -76,6 +83,19 @@ namespace App.Api.Controllers
             }
            
             return Ok(new { message = "Token revoked" });
+        }
+        [HttpPost("Logout")]
+        public  async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                await _userService.Logout(refreshToken);
+            }
+
+            Response.Cookies.Delete("refreshToken", GetRefreshTokenCookieOptions());
+
+            return Ok(new { message = "Sesión cerrada exitosamente" });
         }
     }
 }

@@ -16,7 +16,7 @@ namespace App.Api.Controllers
             _reservacionService = reservacionService;
         }
 
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         [HttpPost("CrearReserva")]
         public async Task<IActionResult> CreateReservacion(CreateReservacionDto dto)
         {
@@ -26,32 +26,35 @@ namespace App.Api.Controllers
             var reservacion = await _reservacionService.CreateReservacion(dto, IdUser);
             return Ok(reservacion);
         }
-        [Authorize]
+        [Authorize(Roles ="User")]
         [HttpPut("ConfirmarReserva/{IdReservacion}")]
         public async Task<IActionResult> ConfirmarReservacion(int IdReservacion)
         {
             var reservacion = await _reservacionService.ConfirmarReservacion(IdReservacion);
             return Ok(reservacion);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetReservaciones()
         {
             var reservaciones = await _reservacionService.GetReservaciones();
             return Ok(reservaciones);
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet("reservacionesCanceladas")]
         public async Task<IActionResult> GetReservacionesCanceladas()
         {
             var reservaciones = await _reservacionService.GetReservacionesCanceladas();
             return Ok(reservaciones);
         }
+        [Authorize]
         [HttpGet("ByHorario/{id}")]
         public async Task<IActionResult> GetReservacionesByHorario(int id)
         {
             var reservaciones = await _reservacionService.GetReservacionByHorario(id);
             return Ok(reservaciones);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         [HttpGet("mis-Reservaciones")]
         public async Task<IActionResult> GetReservacionesByUsuario()
         {
@@ -61,19 +64,21 @@ namespace App.Api.Controllers
             var reservaciones = await _reservacionService.GetReservacionesByUsuario(UserId);
             return Ok(reservaciones);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("ByUsuario/{id}")]
         public async Task<IActionResult> GetReservacionesByUsuario(string id)
         {
             var reservaciones = await _reservacionService.GetReservacionesByUsuario(id);
             return Ok(reservaciones);
         }
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReservacionID(int id)
         {
             var reservacion = await _reservacionService.GetReservacionID(id);
             return Ok(reservacion);
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReservacion(int id)
         {

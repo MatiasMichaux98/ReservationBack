@@ -23,13 +23,16 @@ namespace App.Infrastructure.Service
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWT _jwt;
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwt = jwt.Value;
             _context = context;
+            _signInManager = signInManager;
         }
 
         public async Task<string> RegisterAsync(RegisterModel model)
@@ -202,6 +205,19 @@ namespace App.Infrastructure.Service
             _context.Update(user);
             _context.SaveChanges();
             return true;
+        }
+
+        public async Task<bool> Logout(string token)
+        {
+            var user =  _context.Users.SingleOrDefault(u => u.refreshTokens.Any(t => t.Token == token));
+            if (user == null) return false;
+
+            var refreshToken = user.refreshTokens.Single(x => x.Token == token);
+            if (!refreshToken.IsActive) return true;
+
+            refreshToken.Revoked = DateTime.UtcNow;
+            _context.Update(user);
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
