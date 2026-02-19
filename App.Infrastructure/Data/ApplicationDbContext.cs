@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entitie;
+using App.Domain.Entities;
 using App.Infrastructure.Entitie;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace App.Infrastructure.Data
         public DbSet<Genero> Generos => Set<Genero>();
         public DbSet<Horario> Horarios => Set<Horario>();
         public DbSet<HorarioAsiento> HorarioAsientos => Set<HorarioAsiento>();
+        public DbSet<ReservaAsiento> reservaAsientos => Set<ReservaAsiento>();
         public DbSet<Reservacion> Reservaciones => Set<Reservacion>();
         public DbSet<Sala> Salas => Set<Sala>();
 

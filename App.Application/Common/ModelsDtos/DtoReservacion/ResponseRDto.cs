@@ -12,7 +12,7 @@ namespace App.Application.Common.ModelsDtos.DtoReservacion
         public string Pelicula { get; set; }
         public string Sala { get; set; }
         public string Usuario { get; set; }
-        public asientoResponse asiento { get; set; }
+        public List<asientoResponse> asientos { get; set; }
         public string estadoReserva { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

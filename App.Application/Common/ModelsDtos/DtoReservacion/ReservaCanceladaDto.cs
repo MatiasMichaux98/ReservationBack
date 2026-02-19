@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.Application.Common.ModelsDtos.DtoAsiento;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ namespace App.Application.Common.ModelsDtos.DtoReservacion
         public string Pelicula { get; set; }
         public string Sala { get; set; }
         public string Usuario { get; set; }
-        public required int IdAsiento { get; set; }
+        public List<asientoResponse> asientos { get; set; }
         public string estadoReserva { get; set; }
         public string? CanceladaPor { get; set; }
         public DateTime? FechaCancelacionUtc { get; set; }

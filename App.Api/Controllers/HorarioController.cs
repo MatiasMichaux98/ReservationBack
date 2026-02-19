@@ -36,7 +36,7 @@ namespace App.Api.Controllers
             var horario = await _horarioService.GetHorario(id);
             return Ok(horario);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> CreateHorarios(CreateHorarioDto model)
         {

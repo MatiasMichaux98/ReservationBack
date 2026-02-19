@@ -39,7 +39,8 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
-                .Include(a => a.asiento)
+                .Include(a => a.ReservaAsientos)
+                .ThenInclude(a => a.asiento)
                 .ToListAsync();
             return reservacion;
         }
@@ -48,7 +49,7 @@ namespace App.Infrastructure.Repositories
             var ahora = DateTime.Now;
             var reservacion = await _context.Reservaciones.AnyAsync(r =>
             r.IdHorario == idHorario &&
-            r.IdAsiento == idAsiento &&
+            r.ReservaAsientos.Any(r => r.asientoId == idAsiento) &&
             r.estadoReserva == Domain.Enums.EstadoReserva.Pendiente &&
             r.ExpiraEn > ahora
             );
@@ -87,7 +88,8 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
-                .Include(a => a.asiento)
+                .Include(a => a.ReservaAsientos)
+                .ThenInclude(a => a.asiento)
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(p => p.ID == idreservacion);
             return reservacion;
@@ -100,7 +102,8 @@ namespace App.Infrastructure.Repositories
                 .ThenInclude(p => p.pelicula)
                 .Include(h => h.horario)
                 .ThenInclude(a => a.sala)
-                .Include(a => a.asiento)
+                .Include(a => a.ReservaAsientos)
+                .ThenInclude(a => a.asiento)
                .Where(p => p.IdUsuario == IdUsuario)
                .ToListAsync();
             return reservaciones;

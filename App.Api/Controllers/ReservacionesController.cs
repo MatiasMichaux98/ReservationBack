@@ -16,7 +16,7 @@ namespace App.Api.Controllers
             _reservacionService = reservacionService;
         }
 
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="User")]
         [HttpPost("CrearReserva")]
         public async Task<IActionResult> CreateReservacion(CreateReservacionDto dto)
         {

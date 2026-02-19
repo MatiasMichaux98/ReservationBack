@@ -18,10 +18,7 @@ namespace App.Infrastructure.Data.Configurations
                   .HasForeignKey(h => h.IdHorario)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(h => h.asiento)
-                .WithMany(h => h.reservaciones)
-                .HasForeignKey(h => h.IdAsiento)
-                .OnDelete(DeleteBehavior.Restrict);
+            
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using App.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace App.Domain.Entitie
 {
@@ -10,7 +11,7 @@ namespace App.Domain.Entitie
         public int IdSala { get; set; }
         public Sala sala { get; set; }
         public  ICollection<HorarioAsiento>HorarioAsientos { get; set; } = new List<HorarioAsiento>();
-        public ICollection<Reservacion> reservaciones { get; set; } = new List<Reservacion>();
+        public ICollection<ReservaAsiento> ReservaAsientos { get; set; } = new List<ReservaAsiento>();
 
     }
 }
