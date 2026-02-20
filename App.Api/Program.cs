@@ -20,6 +20,7 @@ using App.Application.Common.Interface.AuthInterface;
 using App.Infrastructure.Service;
 using App.Application.Common.Interface.UsuarioInterface;
 using Microsoft.OpenApi.Models;
+using App.Infrastructure.BackgroundServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuracion JWT
@@ -31,6 +32,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
+builder.Services.AddHostedService<ReservaExpirationService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

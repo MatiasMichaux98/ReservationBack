@@ -48,7 +48,7 @@ namespace App.Application.Service
             {
                 horaFinal = horaFinal.AddDays(1);
             }
-            if (fechaAhora >= horaFinal)
+            if (fechaAhora >= horaFinal) 
                 throw new BussinessExceptions("No se puede reservar, la funcion ya termino.");
             else if  (fechaAhora >= horaInicio) 
                 throw new BussinessExceptions("No se puede reservar, la funcion ya comenzo.");
@@ -107,7 +107,7 @@ namespace App.Application.Service
                 horarioasiento.IsReserved = true;
             }
             reservacion.estadoReserva = EstadoReserva.Reservada;
-        
+
             await _reservationRepository.UpdateReservacion(reservacion);
             return new ResponseRDto
             {

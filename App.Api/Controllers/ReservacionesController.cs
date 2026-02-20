@@ -33,7 +33,7 @@ namespace App.Api.Controllers
             var reservacion = await _reservacionService.ConfirmarReservacion(IdReservacion);
             return Ok(reservacion);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<IActionResult> GetReservaciones()
         {

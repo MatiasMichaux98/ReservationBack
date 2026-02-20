@@ -21,7 +21,7 @@ namespace App.Infrastructure.Repositories
         }
         public async Task<Reservacion> UpdateReservacion(Reservacion reservacion)
         {
-            _context.Reservaciones.Update(reservacion);
+           
             await _context.SaveChangesAsync();
             return reservacion;
         }
