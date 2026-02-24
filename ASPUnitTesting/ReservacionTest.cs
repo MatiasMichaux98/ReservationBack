@@ -277,5 +277,65 @@ namespace ASPUnitTesting
                 _service.ConfirmarReservacion(IdReservacion));
             Assert.Equal("No se puede Confirmar", exeptions.Message);
         }
+
+        [Theory]
+        [InlineData(4)]
+        public async Task Confirmar_CorrectamenteLaReserva(int IdReservacion)
+        {
+            var horarioMock = new Horario
+            {
+                ID = 1,
+                Fecha = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
+                HoraInicio = new TimeOnly(15, 0),
+                HoraFinal = new TimeOnly(17, 0),
+                pelicula = new Pelicula { Nombre = "Batman" },
+                sala = new Sala { Nombre = "Sala 1" }
+            };
+            _horarioAsientoRepositoryMock
+                .Setup(r => r.GetHorarioAsiento(
+                    It.IsAny<int>(),
+                    It.IsAny<int>()))
+                .ReturnsAsync(new HorarioAsiento
+                {
+                    IsReserved = true
+                });
+                
+            _reservationRepositoryMock
+                .Setup(r => r.GetReservacionID(IdReservacion))
+               .ReturnsAsync(new Reservacion
+               {
+                   ID = 4,
+                   IdUsuario = "userId-123",
+                   IdHorario = 1,
+                   horario = horarioMock,
+                   estadoReserva = EstadoReserva.Pendiente,
+                   ReservaAsientos = new List<ReservaAsiento>
+                        {
+                            new ReservaAsiento
+                            {
+                                asientoId = 1,
+                                asiento = new Asiento { ID = 1, NumeroAsiento = "A1" }
+                            },
+                            new ReservaAsiento
+                            {
+                                asientoId = 2,
+                                asiento = new Asiento { ID = 2, NumeroAsiento = "A2" }
+                            }
+                        }
+               
+                });
+
+            var result = await _service.ConfirmarReservacion(IdReservacion);
+
+            Assert.NotNull(result);
+            Assert.Equal(4, result.IdReservacion);
+            Assert.Contains(result.asientos, a => a.ID == 1 && a.NumeroAsiento == "A1");
+            Assert.Contains(result.asientos, a => a.ID == 2 && a.NumeroAsiento == "A2");
+
+            _reservationRepositoryMock.Verify(
+                r => r.UpdateReservacion(It.IsAny<Reservacion>()),
+                Times.Once
+            );
+        }
     }
 }
