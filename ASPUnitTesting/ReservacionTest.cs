@@ -337,5 +337,44 @@ namespace ASPUnitTesting
                 Times.Once
             );
         }
+
+        //EliminarReservacion
+        [Theory]
+        [InlineData(2)]
+        public async Task Falla_SilareservacionNoexiste(int IdReservacion)
+        {
+            _reservationRepositoryMock
+               .Setup(r => r.GetReservacionID(IdReservacion))
+               .ReturnsAsync((Reservacion)null);
+
+            var exeptions = await Assert.ThrowsAsync<BussinessExceptions>(() =>
+               _service.DeleteReservacion(IdReservacion));
+            Assert.Equal("No existe la reservacion", exeptions.Message);
+        }
+        [Theory]
+        [InlineData(2)]
+        public async Task Eliminar_ReservacionCorrectamente(int IdReservacion)
+        {
+            var reservacion = new Reservacion();
+
+            _reservationRepositoryMock
+               .Setup(r => r.GetReservacionID(IdReservacion))
+               .ReturnsAsync(reservacion);
+
+            _reservationRepositoryMock
+                .Setup(r => r.DeleteReservacion(reservacion))
+                .ReturnsAsync(true);
+
+            var result = await _service.DeleteReservacion(IdReservacion);
+
+            Assert.NotNull(result);
+            Assert.True(result);
+
+            _reservationRepositoryMock.Verify(
+                r => r.DeleteReservacion(It.IsAny<Reservacion>()),
+                Times.Once
+            );
+
+        }
     }
 }
