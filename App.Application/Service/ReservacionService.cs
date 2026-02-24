@@ -18,8 +18,8 @@ namespace App.Application.Service
         private readonly IHorarioAsientoRepository _horarioAsientoRepository;
         public ReservacionService(IReservationRepository reservationRepository,
                                   IHorarioRepository horarioRepository,
-                                  IHorarioAsientoRepository horarioAsientoRepository,
-                                  IAsientoRepository asientoRepository
+                                  IHorarioAsientoRepository horarioAsientoRepository
+                                 
                                    )
         {
             _reservationRepository = reservationRepository;
@@ -36,6 +36,7 @@ namespace App.Application.Service
             {
                 var horarioAsiento = await _horarioAsientoRepository.GetValidacion(dto.IdHorario, asientosid);
                 if (horarioAsiento == null) throw new BussinessExceptions($"No se puede reservar el asiento con ID:{asientosid}");
+                
                 var existePendiente = await _reservationRepository.ExistePendiente(dto.IdHorario, asientosid);
                 if (existePendiente) throw new BussinessExceptions("El asiento ya tiene una reserva pendiente");
             }
@@ -50,6 +51,7 @@ namespace App.Application.Service
             }
             if (fechaAhora >= horaFinal) 
                 throw new BussinessExceptions("No se puede reservar, la funcion ya termino.");
+
             else if  (fechaAhora >= horaInicio) 
                 throw new BussinessExceptions("No se puede reservar, la funcion ya comenzo.");
 
@@ -67,7 +69,7 @@ namespace App.Application.Service
             {
                 newReseracion.ReservaAsientos.Add(new ReservaAsiento
                 {
-                    asientoId = asientos
+                    asientoId = asientos,
                 });
             }
 
@@ -84,7 +86,7 @@ namespace App.Application.Service
                 Sala = newReserva.horario.sala.Nombre,
                 estadoReserva = newReserva.estadoReserva.ToString(),
                 CreatedAt = newReserva.CreatedAt,
-                asientos = newReseracion.ReservaAsientos.Select(r => new asientoResponse
+                asientos = newReserva.ReservaAsientos.Select(r => new asientoResponse
                 {
                     ID = r.asiento.ID,
                     NumeroAsiento = r.asiento.NumeroAsiento
@@ -97,6 +99,7 @@ namespace App.Application.Service
             
             var reservacion = await _reservationRepository.GetReservacionID(IdReservacion);
             if (reservacion == null) throw new BussinessExceptions("No existe la reservacion");
+
             if (reservacion.estadoReserva != EstadoReserva.Pendiente)
                 throw new BussinessExceptions("No se puede Confirmar");
 

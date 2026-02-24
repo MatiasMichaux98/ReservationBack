@@ -10,7 +10,7 @@ using App.Infrastructure.Exceptions;
 
 namespace App.Infrastructure.Service
 {
-    public class UsuariosServices : IUsuariosService
+    public class UsuariosServices 
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -25,14 +25,6 @@ namespace App.Infrastructure.Service
             _context = context;
         }
 
-        public Task<string> GetUsers()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<string?> GetUsersId(string Id)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
