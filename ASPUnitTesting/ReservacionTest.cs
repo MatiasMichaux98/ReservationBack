@@ -429,23 +429,78 @@ namespace ASPUnitTesting
             _reservationRepositoryMock
               .Setup(r => r.GetReservaciones())
               .ReturnsAsync(reservaciones);
-
             var result = await _service.GetReservaciones();
-
-
             Assert.NotNull(result);
             Assert.Single(result);
-
             var reservacion = result.First();
-
             Assert.Equal(4, reservacion.IdReservacion);
-
             Assert.Equal(2, reservacion.asientos.Count);
             Assert.Contains(reservacion.asientos, a => a.ID == 1 && a.NumeroAsiento == "A1");
             Assert.Contains(reservacion.asientos, a => a.ID == 2 && a.NumeroAsiento == "A2");
-
         }
 
+
+        //GetReservacionID
+        [Theory]
+        [InlineData(4)]
+        public async void GetIdFalla_CuandoReservacionNoexiste(int IdReservacion)
+        {
+            _reservationRepositoryMock
+              .Setup(r => r.GetReservacionID(IdReservacion))
+              .ReturnsAsync((Reservacion)null);
+
+            var exeptions = await Assert.ThrowsAsync<BussinessExceptions>(() =>
+               _service.GetReservacionID(IdReservacion));
+            Assert.Equal("No existe la reservacion", exeptions.Message);
+        }
+        [Theory]
+        [InlineData(4)]
+        public async void Get_ListadeReservacionID(int IdReservacion)
+        {
+            var horarioMock = new Horario
+            {
+                ID = 1,
+                Fecha = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
+                HoraInicio = new TimeOnly(15, 0),
+                HoraFinal = new TimeOnly(17, 0),
+                pelicula = new Pelicula { Nombre = "Batman" },
+                sala = new Sala { Nombre = "Sala 1" }
+            };
+
+
+            _reservationRepositoryMock
+             .Setup(r => r.GetReservacionID(IdReservacion))
+             .ReturnsAsync(new Reservacion
+             {
+                 ID = 4,
+                 IdUsuario = "userId-123",
+                 IdHorario = 1,
+                 horario = horarioMock,
+                 estadoReserva = EstadoReserva.Pendiente,
+                 ReservaAsientos = new List<ReservaAsiento>
+                     {
+                            new ReservaAsiento
+                            {
+                                asientoId = 1,
+                                asiento = new Asiento { ID = 1, NumeroAsiento = "A1" }
+                            },
+                            new ReservaAsiento
+                            {
+                                asientoId = 2,
+                                asiento = new Asiento { ID = 2, NumeroAsiento = "A2" }
+                            }
+                     }
+
+             });
+            
+
+            var result = await _service.GetReservacionID(IdReservacion);
+            Assert.NotNull(result);
+            Assert.Equal(4, result.IdReservacion);
+            Assert.Equal(2, result.asientos.Count);
+            Assert.Contains(result.asientos, a => a.ID == 1 && a.NumeroAsiento == "A1");
+            Assert.Contains(result.asientos, a => a.ID == 2 && a.NumeroAsiento == "A2");
+        }
 
     }
 }
