@@ -627,7 +627,7 @@ namespace ASPUnitTesting
                 {
                    ID = 4,
                    IdUsuario = "userId-123",
-                   IdHorario = 1,
+                   IdHorario = IdHorario,
                    horario = horarioMock,
                    estadoReserva = EstadoReserva.Cancelada,
                    ReservaAsientos = new List<ReservaAsiento>
@@ -665,7 +665,7 @@ namespace ASPUnitTesting
 
         // //GetReservacionesBYUsuario
         [Theory]
-        [InlineData("Pa$$w0rd")]
+        [InlineData("userId-123")]
         public async Task GetFalla_cuandoNoExisteReservaParaUsuarioo(string IdUsuario)
         {
             _reservationRepositoryMock
@@ -678,7 +678,7 @@ namespace ASPUnitTesting
         }
 
         [Theory]
-        [InlineData("Pa$$w0rd")]
+        [InlineData("userId-123")]
         public async Task Get_ListadeReservacionesByUsuario(string IdUsuario)
         {
             var horarioMock = new Horario
