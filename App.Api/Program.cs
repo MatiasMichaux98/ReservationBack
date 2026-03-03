@@ -103,7 +103,7 @@ builder.Services.AddScoped<IGeneroService, GeneroService>();
 builder.Services.AddScoped<IAsientoService, AsientoService>();
 builder.Services.AddScoped<IAsientoRepository, AsientoRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IDateTimeProvider, DateTimeProviderService>();
 
 
 var app = builder.Build();
