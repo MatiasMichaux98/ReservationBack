@@ -16,15 +16,17 @@ namespace App.Application.Service
         private readonly IReservationRepository _reservationRepository;
         private readonly IHorarioRepository _horarioRepository;
         private readonly IHorarioAsientoRepository _horarioAsientoRepository;
+        private readonly IDateTimeProvider _dateTimeProvider;
         public ReservacionService(IReservationRepository reservationRepository,
                                   IHorarioRepository horarioRepository,
-                                  IHorarioAsientoRepository horarioAsientoRepository
-                                 
+                                  IHorarioAsientoRepository horarioAsientoRepository,
+                                     IDateTimeProvider dateTimeProvider
                                    )
         {
             _reservationRepository = reservationRepository;
             _horarioRepository = horarioRepository;
             _horarioAsientoRepository = horarioAsientoRepository;
+            _dateTimeProvider = dateTimeProvider;
         }
         public async Task<ResponseRDto> CreateReservacion(CreateReservacionDto dto, string IdUser)
         {
@@ -41,7 +43,7 @@ namespace App.Application.Service
                 if (existePendiente) throw new BussinessExceptions("El asiento ya tiene una reserva pendiente");
             }
             
-            var fechaAhora = DateTime.Now;
+            var fechaAhora = _dateTimeProvider.Now;
             var horaInicio = horario.Fecha.ToDateTime(horario.HoraInicio);
             var horaFinal = horario.Fecha.ToDateTime(horario.HoraFinal);
 
@@ -55,7 +57,7 @@ namespace App.Application.Service
             else if  (fechaAhora >= horaInicio) 
                 throw new BussinessExceptions("No se puede reservar, la funcion ya comenzo.");
 
-            var ahora = DateTime.Now;
+            var ahora = _dateTimeProvider.Now;
             var newReseracion = new Reservacion
             {
                 IdHorario = dto.IdHorario,
